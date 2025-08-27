@@ -20,3 +20,28 @@ class GBFSCollector:
         else:
             print(response.status_code)
             return None
+
+
+    def get_gbfs_data(self):
+
+        try:
+            gbfs_data = {}
+
+            for feed in self.get_data_feeds():
+                feed_name = feed['name']
+                feed_url = feed['url']
+                feed_response = requests.get(feed_url)
+
+                if feed_response.status_code == 200:
+                    feed_gbfs_data = feed_response.json()
+                    gbfs_data[feed_name] = feed_gbfs_data
+
+                else:
+                    print(feed_response.status_code)
+                    gbfs_data[feed_name] = {}
+
+            return gbfs_data
+
+        except:
+            print("GBFS data could not be retrieved.")
+            return None
