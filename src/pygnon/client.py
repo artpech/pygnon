@@ -1,6 +1,10 @@
 import json
 import os
 import requests
+import time
+
+from datetime import datetime, timedelta
+
 from pygnon.config import GBFS_BASE_URL, DATA_PATH
 
 class GBFSCollector:
@@ -90,3 +94,47 @@ class GBFSCollector:
 
         else:
             print(f"The file was not loaded. There is no such file as {filepath}.")
+
+
+    def gbfs_collection(self, interval_minutes: int = 1, length_minutes = None):
+
+        start_time = datetime.now()
+        interval_seconds = interval_minutes * 60
+
+        if length_minutes:
+            length_seconds = length_minutes * 60
+            time_count_seconds = 0
+            end_message = f"{length_minutes} minute(s)"
+
+        else:
+            end_message = "Neverending data collection"
+
+        print(f"""
+              🚲 ... Start GBFS data collection ...
+              🎬 Start time: {start_time}
+              ⏱️ Interval: {interval_minutes} minute(s)
+              ⏳ Collection length: {end_message}
+
+              """)
+
+        condition = True
+
+        if end_message:
+            print(end_message)
+
+        while condition:
+
+            self.gbfs_data = self.get_gbfs_data()
+            self.save_to_json()
+
+            time.sleep(interval_seconds)
+
+            if length_minutes:
+                time_count_seconds += interval_seconds
+                condition = time_count_seconds < length_seconds
+
+        end_time = datetime.now()
+
+        print(f"""
+              Data collection ended at: {end_time}
+              """)
