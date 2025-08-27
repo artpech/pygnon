@@ -6,6 +6,7 @@ class GBFSCollector:
 
     def __init__(self):
         self.base_url = GBFS_BASE_URL
+        self.gbfs_data = self.get_gbfs_data()
 
 
     def get_data_feeds(self) -> list:
@@ -37,7 +38,8 @@ class GBFSCollector:
                     gbfs_data[feed_name] = feed_gbfs_data
 
                 else:
-                    print(feed_response.status_code)
+                    print(f'{feed_name} data could not be retrieved')
+                    print('Status code of the response: {feed_response.status_code}')
                     gbfs_data[feed_name] = {}
 
             return gbfs_data
