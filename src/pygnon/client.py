@@ -1,12 +1,17 @@
+import json
+import os
 import requests
-from pygnon.config import GBFS_BASE_URL
+from pygnon.config import GBFS_BASE_URL, DATA_PATH
 
 class GBFSCollector:
 
 
-    def __init__(self):
+    def __init__(self, load_lattest_gbfs = True):
         self.base_url = GBFS_BASE_URL
-        self.gbfs_data = self.get_gbfs_data()
+        if load_lattest_gbfs:
+            self.gbfs_data = self.get_gbfs_data()
+        else:
+            self.gbfs_data = {}
 
 
     def get_data_feeds(self) -> list:
@@ -38,8 +43,8 @@ class GBFSCollector:
                     gbfs_data[feed_name] = feed_gbfs_data
 
                 else:
-                    print(f'{feed_name} data could not be retrieved')
-                    print('Status code of the response: {feed_response.status_code}')
+                    print(f"{feed_name} data could not be retrieved")
+                    print(f"Status code of the response: {feed_response.status_code}")
                     gbfs_data[feed_name] = {}
 
             return gbfs_data
@@ -47,3 +52,22 @@ class GBFSCollector:
         except:
             print("GBFS data could not be retrieved.")
             return None
+
+
+    def save_to_json(self):
+        """
+        Saves GBFS data to a JSON file with a timestamp in the name.
+        """
+        timestamp = self.gbfs_data['gbfs']['last_updated']
+        save_dir = os.path.join(DATA_PATH, 'gbfs_json')
+        os.makedirs(save_dir, exist_ok = True)
+
+        filename = f'gbfs_data_{timestamp}.json'
+        filepath = os.path.join(save_dir, filename)
+
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(self.gbfs_data, f, indent=2)
+
+        print(f"Saved file : {filepath}")
+
+        return filepath
