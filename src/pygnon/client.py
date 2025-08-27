@@ -71,3 +71,22 @@ class GBFSCollector:
         print(f"Saved file : {filepath}")
 
         return filepath
+
+
+    def load_json(self, timestamp: int):
+        """
+        Load GBFS data from a JSON file with a specific timestamp
+        """
+        filename = f"gbfs_data_{str(timestamp)}.json"
+        load_dir = os.path.join(DATA_PATH, 'gbfs_json')
+        filepath = os.path.join(load_dir, filename)
+
+        if os.path.isfile(filepath):
+
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            self.gbfs_data = data
+
+        else:
+            print(f"The file was not loaded. There is no such file as {filepath}.")
