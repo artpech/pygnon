@@ -153,3 +153,28 @@ class GBFSCollector:
             return vehicle_types_df
         else:
             raise Exception("No gbfs data")
+
+
+    def get_station_status_df(self):
+        """Returns a dataframe with the station status data"""
+
+        if self.gbfs_data:
+            station_status_df = pd.json_normalize(
+                self.gbfs_data['station_status']['data']['stations'],
+                sep = "_"
+                )
+
+            vehicle_types_ls = ['1', '2', '4', '5', '6', '7', '10', '14', '15']
+            for vt in vehicle_types_ls:
+                station_status_df[f"count_vehicle_type_{vt}"] = station_status_df.apply(
+                    lambda row : add_vehicle_type_count(row, vt),
+                    axis = 1
+                )
+
+            station_status_df.drop(columns = ['vehicle_types_available'], inplace = True)
+            station_status_df['timestamp'] = self.gbfs_data['gbfs']['last_updated']
+
+            return station_status_df
+
+        else:
+           raise Exception("No gbfs data")
