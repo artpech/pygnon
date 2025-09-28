@@ -192,3 +192,18 @@ class GBFSCollector:
 
         else:
            raise Exception("No gbfs data")
+
+
+    def get_free_bikes_status_df(self):
+        """Returns a dataframe with the free bikes status data"""
+
+        if self.gbfs_data:
+            free_bikes_df = pd.json_normalize(
+                self.gbfs_data['free_bike_status']['data']['bikes'],
+                sep = '_'
+                )
+            free_bikes_df['timestamp'] = self.gbfs_data['gbfs']['last_updated']
+            return free_bikes_df
+
+        else:
+           raise Exception("No gbfs data")
