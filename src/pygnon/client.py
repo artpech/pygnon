@@ -178,3 +178,17 @@ class GBFSCollector:
 
         else:
            raise Exception("No gbfs data")
+
+
+    def get_station_information_df(self):
+        """Returns a dataframe with the station information data"""
+
+        if self.gbfs_data:
+            stations_info_df = pd.json_normalize(
+                self.gbfs_data['station_information']['data']['stations'],
+                sep = '_'
+                )
+            return stations_info_df
+
+        else:
+           raise Exception("No gbfs data")
