@@ -4,8 +4,11 @@ import requests
 import time
 
 from datetime import datetime, timedelta
+import pandas as pd
 
 from pygnon.config import GBFS_BASE_URL, DATA_PATH
+from pygnon.utils import add_vehicle_type_count
+
 
 class GBFSCollector:
 
@@ -138,3 +141,15 @@ class GBFSCollector:
         print(f"""
               Data collection ended at: {end_time}
               """)
+
+
+    def get_vehicle_types_df(self):
+        """Returns a dataframe with the vehicle types data"""
+        if self.gbfs_data:
+            vehicle_types_df = pd.json_normalize(
+                self.gbfs_data['vehicle_types']['data']['vehicle_types'],
+                sep = '_'
+                )
+            return vehicle_types_df
+        else:
+            raise Exception("No gbfs data")
