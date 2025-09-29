@@ -8,13 +8,7 @@ def with_db_connection(func):
     def wrapper(*args, **kwargs):
 
         try:
-            conn = psycopg2.connect(
-                database = DATABASE_CONFIG['name'],
-                user = DATABASE_CONFIG['user'],
-                host = DATABASE_CONFIG['host'],
-                password = DATABASE_CONFIG['password'],
-                port = DATABASE_CONFIG['port']
-            )
+            conn = psycopg2.connect(**DATABASE_CONFIG)
             cursor = conn.cursor()
             print("✅ Connected to the database!")
 
