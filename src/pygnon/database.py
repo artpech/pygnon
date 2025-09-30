@@ -1,5 +1,9 @@
 import psycopg2
+from psycopg2 import sql
 from pygnon.config import DATABASE_CONFIG
+
+from datetime import datetime
+
 
 def with_db_connection(func):
     """Instantiate the connection to the database,
@@ -41,3 +45,16 @@ def create_db(cursor, sql_schema: str):
             print(table_name)
 
         cursor.execute(instruction)
+
+
+
+@with_db_connection
+def insert_into_timestamps(cursor, value: int):
+    """Insert the timestamp into the timestamps table of the database
+    Params:
+        value (int): The timestamp value of the GBFS file"""
+    dt = datetime.fromtimestamp(value)
+    cursor.execute(
+        sql.SQL("insert into {} values (%s)").format(sql.Identifier('timestamps')),
+        (dt,)
+    )
