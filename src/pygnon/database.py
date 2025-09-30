@@ -23,3 +23,21 @@ def with_db_connection(func):
             print(f"❌ Erreur : {e}")
 
     return wrapper
+
+
+@with_db_connection
+def create_db(cursor, sql_schema: str):
+    """Create the database from a SQL Schema / SQL file
+    Params:
+        sql_schema (str): The SQL file with the schema
+    """
+
+    with open(sql_schema, "r") as f:
+        instructions = f.read().split(";")[:-1]
+
+    for instruction in instructions:
+        if instruction.strip()[:12] == "CREATE TABLE":
+            table_name = instruction.strip()[14:].split("(")[0][:-1]
+            print(table_name)
+
+        cursor.execute(instruction)
