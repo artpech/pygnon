@@ -66,8 +66,36 @@ def insert_into_timestamps(cursor, value: int):
     """Insert the timestamp into the timestamps table of the database
     Params:
         value (int): The timestamp value of the GBFS file"""
-    dt = datetime.fromtimestamp(value)
+
     cursor.execute(
-        sql.SQL("insert into {} values (%s)").format(sql.Identifier('timestamps')),
-        (dt,)
+        sql.SQL("INSERT INTO {} VALUES (%s)").format(sql.Identifier('timestamps')),
+        (value,)
     )
+
+
+@with_db_connection
+def insert_into_station_status(cursor, rows: list):
+    """Insert the new rows into the station_status table
+    Params:
+        rows = List of Tuples
+    """
+
+    columns = [
+        'station_id', 'num_bikes_available', 'num_docks_available',
+        'is_installed', 'is_renting', 'is_returning', 'last_reported',
+        'count_vehicle_type_1', 'count_vehicle_type_2', 'count_vehicle_type_4',
+        'count_vehicle_type_5', 'count_vehicle_type_6', 'count_vehicle_type_7',
+        'count_vehicle_type_10', 'count_vehicle_type_14',
+        'count_vehicle_type_15', 'timestamp'
+    ]
+
+    column_names = sql.SQL(', ').join(map(sql.Identifier, columns))
+    placeholders = sql.SQL(', ').join([sql.Placeholder()] * len(columns))
+
+    query = sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
+        sql.Identifier('stations_live'),
+        column_names,
+        placeholders
+    )
+
+    cursor.executemany(query, rows)
