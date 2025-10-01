@@ -188,6 +188,8 @@ class GBFSCollector:
                 self.gbfs_data['station_information']['data']['stations'],
                 sep = '_'
                 )
+            stations_info_df['is_active_station'] = True
+            stations_info_df['timestamp_last_updated'] = self.gbfs_data['gbfs']['last_updated']
             return stations_info_df
 
         else:
