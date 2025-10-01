@@ -16,12 +16,14 @@ def with_db_connection(func):
             cursor = conn.cursor()
             print("✅ Connected to the database!")
 
-            func(cursor, *args, **kwargs)
+            result = func(cursor, *args, **kwargs)
 
             conn.commit()
             cursor.close()
             conn.close()
             print("✅ Transaction completed")
+
+            return result
 
         except Exception as e:
             print(f"❌ Erreur : {e}")
@@ -46,6 +48,17 @@ def create_db(cursor, sql_schema: str):
 
         cursor.execute(instruction)
 
+
+@with_db_connection
+def request_db(cursor, query):
+    cursor.execute(query)
+    data = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    results = {
+        'columns' : columns,
+        'data' : data
+    }
+    return results
 
 
 @with_db_connection
