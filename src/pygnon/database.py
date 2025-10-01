@@ -74,6 +74,26 @@ def insert_into_timestamps(cursor, value: int):
 
 
 @with_db_connection
+def insert_into_stations(cursor, rows: list):
+    """Insert the new rows into the stations table
+    Params:
+        rows = List of Tuples
+    """
+
+    columns = ['id', 'is_active_station']
+    column_names = sql.SQL(', ').join(map(sql.Identifier, columns))
+    placeholders = sql.SQL(', ').join([sql.Placeholder()] * len(columns))
+
+    query = sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
+        sql.Identifier('stations'),
+        column_names,
+        placeholders
+    )
+
+    cursor.executemany(query, rows)
+
+
+@with_db_connection
 def insert_into_station_status(cursor, rows: list):
     """Insert the new rows into the station_status table
     Params:
