@@ -77,7 +77,9 @@ def insert_into_timestamps(cursor, value: int):
 def insert_into_stations(cursor, rows: list):
     """Insert the new rows into the stations table
     Params:
-        rows = List of Tuples
+        rows = List of tuples, of the form
+            ('id', 'is_active_station')
+
     """
 
     columns = ['id', 'is_active_station']
@@ -91,6 +93,23 @@ def insert_into_stations(cursor, rows: list):
     )
 
     cursor.executemany(query, rows)
+
+
+@with_db_connection
+def update_stations(cursor, rows: list):
+    """Update stations with the new values in rows
+    Params:
+        rows = List of tuples, of the form
+            ('id', 'is_active_station')
+    """
+
+    query = sql.SQL("UPDATE {} SET {} = %s WHERE {} = %s").format(
+        sql.Identifier('stations'),
+        sql.Identifier('is_active_station'),
+        sql.Identifier('id')
+    )
+
+    cursor.executemany(query, [(row[1], row[0]) for row in rows])
 
 
 @with_db_connection
