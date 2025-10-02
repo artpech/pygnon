@@ -50,6 +50,46 @@ def create_db(cursor, sql_schema: str = DATABASE_SCHEMA):
 
 
 @with_db_connection
+def get_table_columns(cursor, table_name: str, exclude_auto_id: bool = True) -> list:
+    """
+    Retrieves the list of columns in the PostgreSQL table.
+
+    Params:
+        table_name (str): name of the PostgreSQL table
+        exclude_auto_id (bool): If True, excludes IDENTITY (auto-incrementing) columns.
+
+    Returns:
+        List of column names
+    """
+
+    if exclude_auto_id:
+        # Retrieves all columns except IDENTITY
+        query = """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = %s
+            AND table_schema = 'public'
+            AND is_identity = 'NO'
+            ORDER BY ordinal_position;
+        """
+
+    else:
+        # Retrieves all columns
+        query = """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = %s
+            AND table_schema = 'public'
+            ORDER BY ordinal_position;
+        """
+
+    cursor.execute(query, (table_name,))
+    columns = [row[0] for row in cursor.fetchall()]
+
+    return columns
+
+
+@with_db_connection
 def request_db(cursor, query):
     cursor.execute(query)
     data = cursor.fetchall()
@@ -62,32 +102,15 @@ def request_db(cursor, query):
 
 
 @with_db_connection
-def insert_into_timestamps(cursor, value: int):
-    """Insert the timestamp into the timestamps table of the database
-    Params:
-        value (int): The timestamp value of the GBFS file"""
+def insert_into_db(cursor, table_name: str, rows: list):
 
-    cursor.execute(
-        sql.SQL("INSERT INTO {} VALUES (%s)").format(sql.Identifier('timestamps')),
-        (value,)
-    )
+    columns = get_table_columns(table_name)
 
-
-@with_db_connection
-def insert_into_stations(cursor, rows: list):
-    """Insert the new rows into the stations table
-    Params:
-        rows = List of tuples, of the form
-            ('id', 'is_active_station')
-
-    """
-
-    columns = ['id', 'is_active_station']
     column_names = sql.SQL(', ').join(map(sql.Identifier, columns))
     placeholders = sql.SQL(', ').join([sql.Placeholder()] * len(columns))
 
     query = sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
-        sql.Identifier('stations'),
+        sql.Identifier(table_name),
         column_names,
         placeholders
     )
@@ -110,41 +133,3 @@ def update_stations(cursor, rows: list):
     )
 
     cursor.executemany(query, [(row[1], row[0]) for row in rows])
-
-
-@with_db_connection
-def insert_into_stations_live(cursor, rows: list):
-    """Insert the new rows into the stations_live table
-    Params:
-        rows = List of Tuples
-    """
-
-    columns = [
-        'station_id', 'num_bikes_available', 'num_docks_available',
-        'is_installed', 'is_renting', 'is_returning', 'last_reported',
-        'count_vehicle_type_1', 'count_vehicle_type_2', 'count_vehicle_type_4',
-        'count_vehicle_type_5', 'count_vehicle_type_6', 'count_vehicle_type_7',
-        'count_vehicle_type_10', 'count_vehicle_type_14',
-        'count_vehicle_type_15', 'timestamp'
-    ]
-
-    column_names = sql.SQL(', ').join(map(sql.Identifier, columns))
-    placeholders = sql.SQL(', ').join([sql.Placeholder()] * len(columns))
-
-    query = sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
-        sql.Identifier('stations_live'),
-        column_names,
-        placeholders
-    )
-
-    cursor.executemany(query, rows)
-
-
-@with_db_connection
-def insert_into_stations_details(cursor, rows: list):
-    pass
-
-
-@with_db_connection
-def insert_into_vehicle_types(cursor, rows: list):
-    pass
