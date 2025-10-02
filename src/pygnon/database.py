@@ -133,3 +133,20 @@ def update_stations(cursor, rows: list):
     )
 
     cursor.executemany(query, [(row[1], row[0]) for row in rows])
+
+
+@with_db_connection
+def update_bikes(cursor, rows: list):
+    """Update stations with the new values in rows
+    Params:
+        rows = List of tuples, of the form
+            ('id', 'is_active_bike')
+    """
+
+    query = sql.SQL("UPDATE {} SET {} = %s WHERE {} = %s").format(
+        sql.Identifier('bikes'),
+        sql.Identifier('is_active_bike'),
+        sql.Identifier('id')
+    )
+
+    cursor.executemany(query, [(row[1], row[0]) for row in rows])
