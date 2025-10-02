@@ -113,8 +113,8 @@ def update_stations(cursor, rows: list):
 
 
 @with_db_connection
-def insert_into_station_status(cursor, rows: list):
-    """Insert the new rows into the station_status table
+def insert_into_stations_live(cursor, rows: list):
+    """Insert the new rows into the stations_live table
     Params:
         rows = List of Tuples
     """
