@@ -1,6 +1,6 @@
 import psycopg2
 from psycopg2 import sql
-from pygnon.config import DATABASE_CONFIG
+from pygnon.config import DATABASE_CONFIG, DATABASE_SCHEMA
 
 from datetime import datetime
 
@@ -32,7 +32,7 @@ def with_db_connection(func):
 
 
 @with_db_connection
-def create_db(cursor, sql_schema: str):
+def create_db(cursor, sql_schema: str = DATABASE_SCHEMA):
     """Create the database from a SQL Schema / SQL file
     Params:
         sql_schema (str): The SQL file with the schema

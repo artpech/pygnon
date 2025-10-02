@@ -11,3 +11,4 @@ DATABASE_CONFIG = {
     'password' : os.getenv('DATABASE_PASSWORD'),
     'port' : os.getenv('DATABASE_PORT')
     }
+DATABASE_SCHEMA = os.getenv('DATABASE_SCHEMA')
