@@ -138,3 +138,13 @@ def insert_into_stations_live(cursor, rows: list):
     )
 
     cursor.executemany(query, rows)
+
+
+@with_db_connection
+def insert_into_stations_details(cursor, rows: list):
+    pass
+
+
+@with_db_connection
+def insert_into_vehicle_types(cursor, rows: list):
+    pass
