@@ -205,7 +205,9 @@ class GBFSCollector:
                 sep = '_'
                 )
             free_bikes_df['is_active_bike'] = True
+            free_bikes_df['station_id'] = free_bikes_df['station_id'].replace('', 'no_station')
             free_bikes_df['timestamp'] = self.gbfs_data['gbfs']['last_updated']
+            free_bikes_df['timestamp_last_updated'] = self.gbfs_data['gbfs']['last_updated']
             return free_bikes_df
 
         else:
