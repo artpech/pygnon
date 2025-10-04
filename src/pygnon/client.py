@@ -150,7 +150,7 @@ class GBFSCollector:
                 self.gbfs_data['vehicle_types']['data']['vehicle_types'],
                 sep = '_'
                 )
-            vehicle_types_df['id'] = vehicle_types_df['id'].astype(int)
+            vehicle_types_df['vehicle_type_id'] = vehicle_types_df['vehicle_type_id'].astype(int)
             return vehicle_types_df
         else:
             raise Exception("No gbfs data")
