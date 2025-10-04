@@ -277,11 +277,23 @@ def load_gbfs_stations_details_to_db(gbfs: GBFSCollector):
     Params:
         gbfs (GBFSCollector): A GBFSCollector instance
     """
+
+    # Query the table 'stations_details'
+    query = "SELECT * FROM stations_details"
+    results = request_db(query)
+    current_rows = [row[1:2] + row[3:] for row in results['data']]  # Ignoring the auto-incremented 'id' and 'timestamp_last_updated'
+
+    # Retrieve new row in the gbfs data
     col_names = get_table_columns('stations_details')
     station_details_df = gbfs.get_station_information_df()[col_names]
     station_details_list = station_details_df.to_dict(orient = 'records')
     rows = [tuple(sd_dict.values()) for sd_dict in station_details_list]
-    insert_into_db(table_name = 'stations_details', rows = rows)
+
+    # Only add the rows that are not already in the table 'stations_details' (ignoring 'id' and 'timestamp_last_updated')
+    rows_to_add = [row for row in rows if row[0:1] + row[2:] not in current_rows]
+
+    if rows_to_add:
+        insert_into_db(table_name = 'stations_details', rows = rows_to_add)
 
 
 def load_gbfs_vehicle_types_to_db(gbfs: GBFSCollector):
