@@ -1,11 +1,12 @@
-import psycopg2
-from psycopg2 import sql
-from pygnon.config import DATABASE_CONFIG, DATABASE_SCHEMA
-from pygnon.client import GBFSCollector
-
 from datetime import datetime
+import os
 
 import pandas as pd
+import psycopg2
+from psycopg2 import sql
+
+from pygnon.config import DATA_PATH, DATABASE_CONFIG, DATABASE_SCHEMA
+from pygnon.client import GBFSCollector
 
 
 def with_db_connection(func):
@@ -434,29 +435,57 @@ def load_gbfs_to_db(gbfs_file_timestamp: int):
     gbfs.load_json(timestamp = gbfs_file_timestamp)
 
     timestamps_list = request_db('SELECT timestamp FROM timestamps')['data']
-    if gbfs_file_timestamp in timestamps_list:
-        raise Exception('❌​ This timestamp is already in the database. No operation was performed.')
+    timestamps_list = [tp[0] for tp in timestamps_list]
 
-    print("...Loading data into 'timestamps'...")
-    load_gbfs_timestamps_to_db(gbfs)
+    if int(gbfs_file_timestamp) in timestamps_list:
+        print('❌​ This timestamp is already in the database. No operation was performed.')
 
-    print("...Loading into 'stations'")
-    load_gbfs_stations_to_db(gbfs)
+    else:
+        print("...Loading data into 'timestamps'...")
+        load_gbfs_timestamps_to_db(gbfs)
 
-    print("...Loading into 'stations_live'")
-    load_gbfs_stations_live_to_db(gbfs)
+        print("...Loading into 'stations'")
+        load_gbfs_stations_to_db(gbfs)
 
-    print("...Loading into 'stations_details'")
-    load_gbfs_stations_details_to_db(gbfs)
+        print("...Loading into 'stations_live'")
+        load_gbfs_stations_live_to_db(gbfs)
 
-    print("...Loading into 'vehicle_types'")
-    load_gbfs_vehicle_types_to_db(gbfs)
+        print("...Loading into 'stations_details'")
+        load_gbfs_stations_details_to_db(gbfs)
 
-    print("...Loading into 'bikes'")
-    load_gbfs_bikes_to_db(gbfs)
+        print("...Loading into 'vehicle_types'")
+        load_gbfs_vehicle_types_to_db(gbfs)
 
-    print("...Loading into 'bikes_live'")
-    load_gbfs_bikes_live_to_db(gbfs)
+        print("...Loading into 'bikes'")
+        load_gbfs_bikes_to_db(gbfs)
 
-    print("...Loading into 'bikes_details'")
-    load_gbfs_bikes_details_to_db(gbfs)
+        print("...Loading into 'bikes_live'")
+        load_gbfs_bikes_live_to_db(gbfs)
+
+        print("...Loading into 'bikes_details'")
+        load_gbfs_bikes_details_to_db(gbfs)
+
+
+def load_multiple_gbfs_to_db(gbfs_file_timestamp_start: int = None, gbfs_file_timestamp_end: int = None):
+    """Load multiple GBFS files into the database.
+    Params:
+        gbfs_file_timestamp_start (int): The timestamp of the first file to load into the database
+        gbfs_file_timestamp_end (int): The timestamp of the last file to load into the database
+    """
+
+    gbfs_path = os.path.join(DATA_PATH, 'gbfs_json')
+    gbfs_files_list = [el for el in os.listdir(gbfs_path) if el.endswith('.json')]
+    gbfs_files_timestamps = [int(file.split("_")[-1].split(".")[0]) for file in gbfs_files_list]
+
+    if gbfs_file_timestamp_start is None:
+        gbfs_file_timestamp_start = min(tuple(gbfs_files_timestamps))
+
+    if gbfs_file_timestamp_end is None:
+        gbfs_file_timestamp_end = max(tuple(gbfs_files_timestamps))
+
+    timestamps_to_load = [ts for ts in gbfs_files_timestamps if (ts >= gbfs_file_timestamp_start and ts <= gbfs_file_timestamp_end)]
+
+    for ts in sorted(timestamps_to_load):
+        print(f"... Loading gbfs_data_{ts}.json ...")
+        load_gbfs_to_db(ts)
+        print('---------------------' + '\n')
