@@ -291,7 +291,7 @@ def load_gbfs_vehicle_types_to_db(gbfs: GBFSCollector):
     """
 
     #rows_to_add = []
-    rows_to_update = []
+    #rows_to_update = []
 
     # Query the table vehicle_types
     query = "SELECT * FROM vehicle_types"
@@ -321,7 +321,6 @@ def load_gbfs_vehicle_types_to_db(gbfs: GBFSCollector):
 
     if rows_to_update:
         update_vehicle_types(rows_to_update)
-        pass
 
 
 def load_gbfs_bikes_to_db(gbfs: GBFSCollector):
@@ -394,11 +393,23 @@ def load_gbfs_bikes_details_to_db(gbfs: GBFSCollector):
     Params:
         gbfs (GBFSCollector): A GBFSCollector instance
     """
+
+    # Query the table 'bikes_details'
+    query = "SELECT * FROM bikes_details"
+    results = request_db(query)
+    current_rows = [(row[1], row[-1]) for row in results['data']]  # Ignoring the auto-incremented 'id' and 'timestamp_last_updated'
+
+    # Retrieve new row in the gbfs data
     col_names = get_table_columns('bikes_details')
     bikes_details_df = gbfs.get_free_bikes_status_df()[col_names]
     bikes_details_list = bikes_details_df.to_dict(orient = 'records')
     rows = [tuple(bd_dict.values()) for bd_dict in bikes_details_list]
-    insert_into_db(table_name = 'bikes_details', rows = rows)
+
+    # Only add the rows that are not already in the table 'bikes_details' (ignoring 'id' and 'timestamp_last_updated')
+    rows_to_add = [row for row in rows if (row[0], int(row[-1])) not in current_rows]
+
+    if rows_to_add:
+        insert_into_db(table_name = 'bikes_details', rows = rows_to_add)
 
 
 def load_gbfs_to_db(gbfs_file_timestamp: int):
