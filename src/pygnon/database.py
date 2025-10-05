@@ -489,3 +489,8 @@ def load_multiple_gbfs_to_db(gbfs_file_timestamp_start: int = None, gbfs_file_ti
         print(f"... Loading gbfs_data_{ts}.json ...")
         load_gbfs_to_db(ts)
         print('---------------------' + '\n')
+
+
+if __name__ == "__main__":
+    lattest_timestamp = request_db('SELECT MAX(timestamp) FROM timestamps')['data'][0][0]
+    load_multiple_gbfs_to_db(gbfs_file_timestamp_start = lattest_timestamp + 1)
