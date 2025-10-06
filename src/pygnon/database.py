@@ -94,8 +94,8 @@ def get_table_columns(cursor, table_name: str, exclude_auto_id: bool = True) -> 
 
 
 @with_db_connection
-def request_db(cursor, query):
-    cursor.execute(query)
+def request_db(cursor, query, placeholders: list = None):
+    cursor.execute(query, placeholders)
     data = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
     results = {
