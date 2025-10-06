@@ -2,7 +2,16 @@
 
 # Project Dir
 drafts/*
+
+# Data directory - ignore content but keep structure
 data/*
+!data/.gitkeep
+!data/gbfs_json/
+data/gbfs_json/*
+!data/gbfs_json/.gitkeep
+!data/database/
+data/database/*
+!data/database/schema.sql
 
 # Jupyter Notebook
 .ipynb_checkpoints
