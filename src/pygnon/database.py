@@ -511,7 +511,7 @@ if __name__ == "__main__":
     if command == 'create_db':
         create_db()
 
-    elif command == 'load_multiple_gbfs_to_db':
+    elif command == 'load_files':
 
         gbfs_file_timestamp_start = None
         gbfs_file_timestamp_end = None
