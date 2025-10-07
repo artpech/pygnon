@@ -444,7 +444,7 @@ def load_gbfs_to_db(gbfs_file_timestamp: int):
         gbfs (int): The timestamp that identifies the GBFS json file to load into database
     """
 
-    gbfs = GBFSCollector(load_lattest_gbfs = False)
+    gbfs = GBFSCollector(load_latest_gbfs = False)
     gbfs.load_json(timestamp = gbfs_file_timestamp)
 
     timestamps_list = request_db('SELECT timestamp FROM timestamps')['data']

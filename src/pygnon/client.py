@@ -13,9 +13,9 @@ from pygnon.utils import add_vehicle_type_count
 class GBFSCollector:
 
 
-    def __init__(self, load_lattest_gbfs = True):
+    def __init__(self, load_latest_gbfs = True):
         self.base_url = GBFS_BASE_URL
-        if load_lattest_gbfs:
+        if load_latest_gbfs:
             self.gbfs_data = self.get_gbfs_data()
         else:
             self.gbfs_data = {}
