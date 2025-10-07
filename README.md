@@ -55,20 +55,20 @@ Execute the script to create the database from the schema in `./data/database/sc
 
 ### 4.2. Importing JSON files data into PostgreSQL database
 
-Run the command to import data from JSON files into the database: `poetry run src/pygnon/database.py load_files`
+Run the command to import data from JSON files into the database: `poetry run python src/pygnon/database.py load_files`
 
 With no additional argument this command line will import all json files located in the `./data/gbfs_json` directory  into the database.
 
-You can also run the command with arguments: `poetry run src/pygnon/database.py load_files [arg1] [arg2]`
+You can also run the command with arguments: `poetry run python src/pygnon/database.py load_files [arg1] [arg2]`
 
 - Option 1)
     - [arg1] set to `-l` or `-latest`: the program will retrieve the latest timestamp already in database and will only import JSON files whose timestamps are later than the most recent timestamp in the database
-    - Run: `poetry run src/pygnon/database.py load_files -l`
-    - Or: `poetry run src/pygnon/database.py load_files -latest`
+    - Run: `poetry run python src/pygnon/database.py load_files -l`
+    - Or: `poetry run python src/pygnon/database.py load_files -latest`
 - Option 2)
     - [arg1] and/or [arg2] are set to the 1st and last timestamp of files to load into the database
-    - Running: `poetry run src/pygnon/database.py load_files 1759839816` will only import JSON files whose timestamp are ≥ `1759839816`
-    - Running: `poetry run src/pygnon/database.py load_files 1759839816 1759840604` will only import JSON files whose timestamp are ≥ `1759839816` and ≤ `1759840604`
+    - Running: `poetry run python src/pygnon/database.py load_files 1759839816` will only import JSON files whose timestamp are ≥ `1759839816`
+    - Running: `poetry run python src/pygnon/database.py load_files 1759839816 1759840604` will only import JSON files whose timestamp are ≥ `1759839816` and ≤ `1759840604`
 
 ### 4.3. Real-time GBFS files retrieval and database feeding
 
