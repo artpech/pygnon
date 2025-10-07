@@ -522,10 +522,10 @@ if __name__ == "__main__":
                 gbfs_file_timestamp_start = latest_timestamp + 1
 
         elif len(sys.argv) == 3:
-            gbfs_file_timestamp_start = sys.argv[2]
+            gbfs_file_timestamp_start = int(sys.argv[2])
 
         elif len(sys.argv) == 4:
-            gbfs_file_timestamp_start = sys.argv[2]
-            gbfs_file_timestamp_end = sys.argv[3]
+            gbfs_file_timestamp_start = int(sys.argv[2])
+            gbfs_file_timestamp_end = int(sys.argv[3])
 
         load_multiple_gbfs_to_db(gbfs_file_timestamp_start, gbfs_file_timestamp_end)
