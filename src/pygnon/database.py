@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+import sys
 
 import pandas as pd
 import psycopg2
@@ -504,5 +505,27 @@ def load_multiple_gbfs_to_db(gbfs_file_timestamp_start: int = None, gbfs_file_ti
 
 
 if __name__ == "__main__":
-    lattest_timestamp = request_db('SELECT MAX(timestamp) FROM timestamps')['data'][0][0]
-    load_multiple_gbfs_to_db(gbfs_file_timestamp_start = lattest_timestamp + 1)
+
+    command = sys.argv[1]
+
+    if command == 'create_db':
+        create_db()
+
+    elif command == 'load_multiple_gbfs_to_db':
+
+        gbfs_file_timestamp_start = None
+        gbfs_file_timestamp_end = None
+
+        if len(sys.argv) == 3:
+            if sys.argv[2] == '-latest' or sys.argv[2] == '-l':
+                latest_timestamp = request_db('SELECT MAX(timestamp) FROM timestamps')['data'][0][0]
+                gbfs_file_timestamp_end = latest_timestamp + 1
+
+        elif len(sys.argv) == 3:
+            gbfs_file_timestamp_start = sys.argv[2]
+
+        elif len(sys.argv) == 4:
+            gbfs_file_timestamp_start = sys.argv[2]
+            gbfs_file_timestamp_end = sys.argv[3]
+
+        load_multiple_gbfs_to_db(gbfs_file_timestamp_start, gbfs_file_timestamp_end)
