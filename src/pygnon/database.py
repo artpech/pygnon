@@ -519,7 +519,8 @@ if __name__ == "__main__":
         if len(sys.argv) == 3:
             if sys.argv[2] == '-latest' or sys.argv[2] == '-l':
                 latest_timestamp = request_db('SELECT MAX(timestamp) FROM timestamps')['data'][0][0]
-                gbfs_file_timestamp_start = latest_timestamp + 1
+                if latest_timestamp:
+                    gbfs_file_timestamp_start = latest_timestamp + 1
 
         elif len(sys.argv) == 3:
             gbfs_file_timestamp_start = int(sys.argv[2])
