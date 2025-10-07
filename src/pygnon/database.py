@@ -54,6 +54,18 @@ def create_db(cursor, sql_schema: str = DATABASE_SCHEMA):
 
 
 @with_db_connection
+def db_has_tables(cursor):
+    """Checks if the database has tables"""
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+    """)
+    nb_tables = cursor.fetchone()[0]
+    return nb_tables > 0
+
+
+@with_db_connection
 def get_table_columns(cursor, table_name: str, exclude_auto_id: bool = True) -> list:
     """
     Retrieves the list of columns in the PostgreSQL table.
