@@ -508,7 +508,7 @@ if __name__ == "__main__":
 
     command = sys.argv[1]
 
-    if command == 'create_db':
+    if command == 'create_database':
         create_db()
 
     elif command == 'load_files':
