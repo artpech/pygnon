@@ -87,4 +87,5 @@ In another terminal window run:
 while true; do
 poetry run python src/pygnon/database.py load_files -latest
 sleep 60
+done
 ```
